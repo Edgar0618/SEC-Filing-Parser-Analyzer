@@ -338,23 +338,27 @@ def index():
 def register():
     error = None
     if request.method == 'POST':
-        db = createConnection()
-        createCollection(db)
-        username = request.form['username']
-        password = request.form['password']
-        name = request.form['name']
-        date_of_birth = request.form['date_of_birth']
-        admin_checked = 'admin' in request.form
-        secret_key = request.form.get('secret_key', '')
+        try:
+            db = createConnection()
+            createCollection(db)
+            username = request.form['username']
+            password = request.form['password']
+            name = request.form['name']
+            date_of_birth = request.form['date_of_birth']
+            admin_checked = 'admin' in request.form
+            secret_key = request.form.get('secret_key', '')
 
-        correct_secret_key = "admin"
-        is_admin = admin_checked and secret_key == correct_secret_key
+            correct_secret_key = "admin"
+            is_admin = admin_checked and secret_key == correct_secret_key
 
-        success, message = registerUser(db, username, password, name, date_of_birth, is_admin)
-        if success:
-            return redirect(url_for('index'))
-        else:
-            error = message
+            success, message = registerUser(db, username, password, name, date_of_birth, is_admin)
+            if success:
+                return redirect(url_for('index'))
+            else:
+                error = message
+        except Exception as e:
+            error = "Registration failed: " + str(e)
+            print("Registration error: " + str(e))
 
     return render_template('register.html', error=error)
 
@@ -377,17 +381,21 @@ def login_page():
 
     error = None
     if request.method == 'POST':
-        db = createConnection()
-        username = request.form['username']
-        password = request.form['password']
-        hashed_password = hash_password(password)
+        try:
+            db = createConnection()
+            username = request.form['username']
+            password = request.form['password']
+            hashed_password = hash_password(password)
 
-        success, user = login(db, username, hashed_password)
-        if success:
-            session['username'] = username
-            return redirect(url_for('index'))
-        else:
-            error = "Invalid username or password"
+            success, user = login(db, username, hashed_password)
+            if success:
+                session['username'] = username
+                return redirect(url_for('index'))
+            else:
+                error = "Invalid username or password"
+        except Exception as e:
+            error = f"Login failed: {str(e)}"
+            print(f"Login error: {e}")
 
     return render_template('login.html', error=error)
 
