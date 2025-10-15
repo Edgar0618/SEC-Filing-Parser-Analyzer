@@ -420,7 +420,11 @@
 <script>
 fetch('/live_ticker').then(r=>r.json()).then(d=>{
   const el=document.getElementById('ticker-content');
-  el.textContent=(d&&d.items)?d.items.join('   •   '):'Market data unavailable';
+  if(!d||!d.items){ el.textContent='Market data unavailable'; return; }
+  el.innerHTML = d.items.map(it=>{
+    const color = it.change>=0 ? '#00c805' : '#ff6b6b';
+    return `<span style="color:${color}">${it.text}</span>`;
+  }).join(' &nbsp; • &nbsp; ');
 }).catch(()=>{const el=document.getElementById('ticker-content'); el.textContent='Market data unavailable';});
 </script>
 </html>

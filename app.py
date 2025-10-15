@@ -574,18 +574,27 @@ def instructions():
 
 @app.route('/live_ticker')
 def live_ticker():
-    # Lightweight ticker using yfinance; tolerate failures
-    tickers = ['^DJI', '^GSPC', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+    # Fetch quotes from Yahoo Finance public quote endpoint (no API key)
+    symbols = ['^DJI', '^GSPC', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+    url = 'https://query1.finance.yahoo.com/v7/finance/quote'
     items = []
-    for t in tickers:
-        try:
-            stock = yf.Ticker(t)
-            hist = stock.history(period='1d')
-            price = hist['Close'].iloc[-1]
-            items.append(f"{t}: ${price:.2f}")
-        except Exception:
-            items.append(f"{t}: N/A")
-    return jsonify({ 'items': items })
+    try:
+        resp = requests.get(url, params={'symbols': ','.join(symbols)}, timeout=5)
+        data = resp.json().get('quoteResponse', {}).get('result', [])
+        by_symbol = {q.get('symbol'): q for q in data}
+        for s in symbols:
+            q = by_symbol.get(s, {})
+            price = q.get('regularMarketPrice')
+            change_pct = q.get('regularMarketChangePercent')
+            if price is None or change_pct is None:
+                items.append({'text': f"{s}: N/A", 'change': 0})
+            else:
+                sign = '+' if change_pct >= 0 else ''
+                text = f"{s}: ${price:.2f} ({sign}{change_pct:.2f}%)"
+                items.append({'text': text, 'change': float(change_pct)})
+    except Exception:
+        items = [{'text': f"{s}: N/A", 'change': 0} for s in symbols]
+    return jsonify({'items': items})
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
