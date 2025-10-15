@@ -200,6 +200,9 @@
             <li><a href="/profile">Profile</a></li>
             <li><a href="/logout">Log Out</a></li>
         </ul>
+        <div id="ticker" style="margin-top:12px; overflow:hidden; white-space:nowrap; border-top:1px solid #2a2a2a; padding-top:10px;">
+            <div id="ticker-content" style="display:inline-block; animation: scroll-left 30s linear infinite;">Loading live market data...</div>
+        </div>
     </header>
     
     <div class="live-data">
@@ -277,4 +280,13 @@
     </script>
     {% endif %}
 </body>
+<style>
+@keyframes scroll-left { 0% { transform: translateX(100%);} 100% { transform: translateX(-100%);} }
+</style>
+<script>
+fetch('/live_ticker').then(r=>r.json()).then(d=>{
+  const el=document.getElementById('ticker-content');
+  el.textContent=(d&&d.items)?d.items.join('   •   '):'Market data unavailable';
+}).catch(()=>{const el=document.getElementById('ticker-content'); el.textContent='Market data unavailable';});
+</script>
 </html>

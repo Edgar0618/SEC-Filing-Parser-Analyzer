@@ -340,29 +340,29 @@ def register():
     error = None
     if request.method == 'POST':
         try:
-            db = createConnection()
-            createCollection(db)
+        db = createConnection()
+        createCollection(db)
             # Support minimal forms (username/password only)
             username = request.form.get('username', '').strip()
             password = request.form.get('password', '').strip()
             # Optional fields defaulted for simplified UI
             name = request.form.get('name', username)
             date_of_birth = request.form.get('date_of_birth', '')
-            admin_checked = 'admin' in request.form
-            secret_key = request.form.get('secret_key', '')
+        admin_checked = 'admin' in request.form
+        secret_key = request.form.get('secret_key', '')
 
-            correct_secret_key = "admin"
-            is_admin = admin_checked and secret_key == correct_secret_key
+        correct_secret_key = "admin"
+        is_admin = admin_checked and secret_key == correct_secret_key
 
             # Basic validation
             if not username or not password:
                 raise Exception('Username and password are required')
 
-            success, message = registerUser(db, username, password, name, date_of_birth, is_admin)
-            if success:
-                return redirect(url_for('index'))
-            else:
-                error = message
+        success, message = registerUser(db, username, password, name, date_of_birth, is_admin)
+        if success:
+            return redirect(url_for('index'))
+        else:
+            error = message
         except Exception as e:
             error = "Registration failed: " + str(e)
             print("Registration error: " + str(e))
@@ -389,17 +389,17 @@ def login_page():
     error = None
     if request.method == 'POST':
         try:
-            db = createConnection()
-            username = request.form['username']
-            password = request.form['password']
-            hashed_password = hash_password(password)
+        db = createConnection()
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = hash_password(password)
 
-            success, user = login(db, username, hashed_password)
-            if success:
-                session['username'] = username
+        success, user = login(db, username, hashed_password)
+        if success:
+            session['username'] = username 
                 return redirect(url_for('index'))
-            else:
-                error = "Invalid username or password"
+        else:
+            error = "Invalid username or password"
         except Exception as e:
             error = f"Login failed: {str(e)}"
             print(f"Login error: {e}")
@@ -416,8 +416,8 @@ def profile():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    db = createConnection()
-    user = db.users.find_one({"username": session['username']})
+        db = createConnection()
+        user = db.users.find_one({"username": session['username']})
     if not user:
         return redirect(url_for('login'))
 
