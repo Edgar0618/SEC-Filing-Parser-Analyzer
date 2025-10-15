@@ -1,6 +1,6 @@
 # SEC Filing Parser & Analyzer
 
-A sophisticated financial document analysis platform that transforms complex SEC 10-Q filings into actionable insights through advanced pattern recognition and interactive analytics.
+Financial document analysis platform that transforms complex SEC 10-Q filings into actionable insights through advanced pattern recognition and interactive analytics.
 
 ## Tech Stack
 
@@ -14,4 +14,4 @@ A sophisticated financial document analysis platform that transforms complex SEC
 
 ## Link
 
-[Live Demo](https://your-vercel-url.vercel.app)
+[Live Demo](https://sec-filing-parser-analyzer-iuie4cnvq.vercel.app/)
