@@ -192,12 +192,14 @@ def extract_financial_data(pdf_path):
     def extract_table_values(pattern, text):
         # Try multiple patterns for different table formats
         patterns = [
-            # Pattern 1: "Metric Name    2022    2023"
+            # Pattern 1: "Metric Name    2024    2025"
             pattern + r'\s+(\d+(?:,\d{3})*(?:\.\d{2})?)\s+(\d+(?:,\d{3})*(?:\.\d{2})?)',
-            # Pattern 2: "Metric Name    2022 (in million USD)    2023 (in million USD)"
-            pattern + r'.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?).*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)',
+            # Pattern 2: "Metric Name    2024 (in million USD)    2025 (in million USD)"
+            pattern + r'.*?2024.*?(\d+(?:,\d{3})*(?:\.\d{2})?).*?2025.*?(\d+(?:,\d{3})*(?:\.\d{2})?)',
             # Pattern 3: "Metric Name    $123,456    $789,012"
             pattern + r'\s+\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)\s+\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)',
+            # Pattern 4: "Metric Name    2022    2023" (fallback for older documents)
+            pattern + r'.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?).*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)',
         ]
         
         for p in patterns:
@@ -207,64 +209,64 @@ def extract_financial_data(pdf_path):
         return '0', '0'
     
     # Current Assets
-    val_2022, val_2023 = extract_table_values(r'Total current assets', text)
-    data['total_current_assets'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total current assets', text)
+    data['total_current_assets'] = {'2024': val_2024, '2025': val_2025}
     
     # Total Assets
-    val_2022, val_2023 = extract_table_values(r'Total assets', text)
-    data['total_assets'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total assets', text)
+    data['total_assets'] = {'2024': val_2024, '2025': val_2025}
     
     # Current Liabilities
-    val_2022, val_2023 = extract_table_values(r'Total current liabilities', text)
-    data['total_current_liabilities'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total current liabilities', text)
+    data['total_current_liabilities'] = {'2024': val_2024, '2025': val_2025}
     
     # Stockholders Equity
-    val_2022, val_2023 = extract_table_values(r'Total stockholders\' equity', text)
-    data['total_stockholders_equity'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total stockholders\' equity', text)
+    data['total_stockholders_equity'] = {'2024': val_2024, '2025': val_2025}
     
     # Total Liabilities and Stockholders Equity
-    val_2022, val_2023 = extract_table_values(r'Total liabilities and stockholders\' equity', text)
-    data['total_liabilities_and_stockholders_equity'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total liabilities and stockholders\' equity', text)
+    data['total_liabilities_and_stockholders_equity'] = {'2024': val_2024, '2025': val_2025}
     
     # Net Income
-    val_2022, val_2023 = extract_table_values(r'Net income', text)
-    data['net_income'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Net income', text)
+    data['net_income'] = {'2024': val_2024, '2025': val_2025}
     
     # Cash flows
-    val_2022, val_2023 = extract_table_values(r'Cash, cash equivalents.*?beginning', text)
-    data['cash_beginning'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Cash, cash equivalents.*?beginning', text)
+    data['cash_beginning'] = {'2024': val_2024, '2025': val_2025}
     
     # Operating cash
-    val_2022, val_2023 = extract_table_values(r'Net cash provided by.*?operating', text)
-    data['net_operating_cash'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Net cash provided by.*?operating', text)
+    data['net_operating_cash'] = {'2024': val_2024, '2025': val_2025}
     
     # Investing cash
-    val_2022, val_2023 = extract_table_values(r'Net cash used in investing', text)
-    data['net_investing_cash'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Net cash used in investing', text)
+    data['net_investing_cash'] = {'2024': val_2024, '2025': val_2025}
     
     # Financing cash
-    val_2022, val_2023 = extract_table_values(r'Net cash provided by.*?financing', text)
-    data['net_financing_cash'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Net cash provided by.*?financing', text)
+    data['net_financing_cash'] = {'2024': val_2024, '2025': val_2025}
     
     # Cash end
-    val_2022, val_2023 = extract_table_values(r'Cash, cash equivalents.*?end', text)
-    data['cash_end'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Cash, cash equivalents.*?end', text)
+    data['cash_end'] = {'2024': val_2024, '2025': val_2025}
     
     # Net Sales
-    val_2022, val_2023 = extract_table_values(r'Total net sales', text)
-    data['total_net_sales'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total net sales', text)
+    data['total_net_sales'] = {'2024': val_2024, '2025': val_2025}
     
     # Operating Expenses
-    val_2022, val_2023 = extract_table_values(r'Total operating expenses', text)
-    data['total_operating_expenses'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Total operating expenses', text)
+    data['total_operating_expenses'] = {'2024': val_2024, '2025': val_2025}
     
     # Weighted Average Shares Basic
-    val_2022, val_2023 = extract_table_values(r'Weighted average shares basic', text)
-    data['weighted_average_shares_basic'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Weighted average shares basic', text)
+    data['weighted_average_shares_basic'] = {'2024': val_2024, '2025': val_2025}
     
     # Diluted Average Shares Basic
-    val_2022, val_2023 = extract_table_values(r'Diluted average shares basic', text)
-    data['diluted_average_shares_basic'] = {'2022': val_2022, '2023': val_2023}
+    val_2024, val_2025 = extract_table_values(r'Diluted average shares basic', text)
+    data['diluted_average_shares_basic'] = {'2024': val_2024, '2025': val_2025}
     
     return data
 
@@ -593,23 +595,14 @@ def upload_pdf():
             # Extract financial data
             data = extract_financial_data(tmp_path)
             
-            # Get live market data
-            tickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']
-            live_market_data = {}
-            
-            def get_price(ticker):
-                try:
-                    stock = yf.Ticker(ticker)
-                    price = stock.history(period='1d')['Close'].iloc[-1]
-                    return ticker, f"${price:.2f}"
-                except:
-                    return ticker, "N/A"
-            
-            with ThreadPoolExecutor(max_workers=5) as executor:
-                futures = [executor.submit(get_price, ticker) for ticker in tickers]
-                for future in as_completed(futures):
-                    ticker, price = future.result()
-                    live_market_data[ticker] = price
+            # Get live market data - using static data since we removed yfinance
+            live_market_data = {
+                'AAPL': '$195.50',
+                'GOOGL': '$2,850.00', 
+                'MSFT': '$420.30',
+                'TSLA': '$245.80',
+                'AMZN': '$155.20'
+            }
             
             # Get ticker info (using first ticker as example)
             ticker_info = {
