@@ -5,6 +5,7 @@ import yfinance as yf
 # Removed matplotlib - using Chart.js instead for better performance and smaller bundle size
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
+import time
 import json
 import fitz  # PyMuPDF
 import re
@@ -572,28 +573,68 @@ def instructions():
     
     return render_template('instructions.html', name=user['name'])
 
+# 60s cache to avoid rate limits
+_ticker_cache = {'ts': 0, 'items': []}
+
 @app.route('/live_ticker')
 def live_ticker():
-    # Fetch quotes from Yahoo Finance public quote endpoint (no API key)
-    symbols = ['^DJI', '^GSPC', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+    if time.time() - _ticker_cache['ts'] < 60 and _ticker_cache['items']:
+        return jsonify({'items': _ticker_cache['items']})
+
+    # Symbols and display names
+    symbols = [
+        '^DJI', '^GSPC', '^IXIC', '^VIX', 'SPY', 'QQQ',
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
+        'BTC-USD', 'ETH-USD', 'GC=F', 'SI=F', 'CL=F'
+    ]
+    display = {
+        '^DJI': 'DOW', '^GSPC': 'S&P 500', '^IXIC': 'NASDAQ', '^VIX': 'VIX',
+        'GC=F': 'GOLD', 'SI=F': 'SILVER', 'CL=F': 'CRUDE'
+    }
+
     url = 'https://query1.finance.yahoo.com/v7/finance/quote'
     items = []
+
     try:
         resp = requests.get(url, params={'symbols': ','.join(symbols)}, timeout=5)
         data = resp.json().get('quoteResponse', {}).get('result', [])
         by_symbol = {q.get('symbol'): q for q in data}
+
         for s in symbols:
             q = by_symbol.get(s, {})
             price = q.get('regularMarketPrice')
             change_pct = q.get('regularMarketChangePercent')
+
+            # Fallback with yfinance if Yahoo response is missing
             if price is None or change_pct is None:
-                items.append({'text': f"{s}: N/A", 'change': 0})
+                try:
+                    t = yf.Ticker(s)
+                    hist = t.history(period='2d')
+                    if not hist.empty:
+                        price = float(hist['Close'].iloc[-1])
+                        prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else price
+                        change_pct = ((price - prev) / prev) * 100 if prev else 0
+                except Exception:
+                    price = None
+                    change_pct = None
+
+            if price is None or change_pct is None:
+                items.append({'text': f"{display.get(s, s)}: N/A", 'change': 0})
             else:
                 sign = '+' if change_pct >= 0 else ''
-                text = f"{s}: ${price:.2f} ({sign}{change_pct:.2f}%)"
+                name = display.get(s, s)
+                if s.endswith('-USD'):
+                    text = f"{name}: ${price:,.0f} ({sign}{change_pct:.2f}%)"
+                elif s in ('GC=F','SI=F','CL=F'):
+                    text = f"{name}: ${price:,.2f} ({sign}{change_pct:.2f}%)"
+                else:
+                    text = f"{name}: {price:,.2f} ({sign}{change_pct:.2f}%)"
                 items.append({'text': text, 'change': float(change_pct)})
     except Exception:
-        items = [{'text': f"{s}: N/A", 'change': 0} for s in symbols]
+        items = [{'text': f"{display.get(s, s)}: N/A", 'change': 0} for s in symbols]
+
+    _ticker_cache['ts'] = time.time()
+    _ticker_cache['items'] = items
     return jsonify({'items': items})
 
 @app.route('/upload_pdf', methods=['POST'])
