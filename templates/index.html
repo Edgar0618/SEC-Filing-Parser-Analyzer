@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to DataMiner!</title>
+    <title>SEC Filing Parser & Analyzer</title>
     <style>
         * {
             margin: 0;
@@ -12,148 +12,403 @@
         }
 
         body {
-            background-color: #0d0d0d;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
             color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        header {
-            background: #1a1a1a;
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 200, 5, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 200, 5, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
             padding: 20px 40px;
-            border-bottom: 1px solid #2a2a2a;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
         }
 
-        header h1 {
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
             color: #00c805;
-            margin-bottom: 20px;
-            font-size: 28px;
-            font-weight: 500;
+            text-decoration: none;
         }
 
-        header ul {
-            list-style-type: none;
+        .nav-buttons {
             display: flex;
             gap: 15px;
-            flex-wrap: wrap;
         }
 
-        header ul li a {
+        .nav-btn {
             color: #ffffff;
             text-decoration: none;
             font-size: 15px;
-            padding: 10px 20px;
-            background: #2a2a2a;
-            border-radius: 24px;
+            padding: 12px 24px;
+            background: rgba(42, 42, 42, 0.8);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
-            display: inline-block;
-            border: 1px solid #3a3a3a;
+            font-weight: 500;
         }
 
-        header ul li a:hover {
+        .nav-btn:hover {
             background: #00c805;
             color: #0d0d0d;
             border-color: #00c805;
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 200, 5, 0.3);
         }
 
-        section {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 40px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border: 1px solid #2a2a2a;
+        .hero {
+            padding: 120px 40px 80px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        h2 {
-            color: #00c805;
-            margin-bottom: 25px;
-            font-size: 24px;
-            font-weight: 500;
-            border-bottom: 2px solid #00c805;
-            padding-bottom: 10px;
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00c805 0%, #00e006 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
         }
 
-        p {
+        .hero-subtitle {
+            font-size: 1.5rem;
             color: #d4d4d4;
-            line-height: 1.8;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 40px;
+            font-weight: 300;
         }
 
-        p:hover {
+        .description {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .cta-section {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 80px;
+        }
+
+        .cta-btn {
+            padding: 16px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cta-primary {
+            background: #00c805;
+            color: #0d0d0d;
+            border-color: #00c805;
+        }
+
+        .cta-primary:hover {
+            background: #00e006;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 200, 5, 0.4);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .cta-secondary:hover {
+            background: #ffffff;
+            color: #0d0d0d;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 255, 255, 0.2);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .feature-card {
+            background: rgba(26, 26, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00c805;
+            box-shadow: 0 20px 40px rgba(0, 200, 5, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #00c805;
+        }
+
+        .feature-description {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        .tech-stack {
+            background: rgba(13, 13, 13, 0.8);
+            margin: 80px 40px;
+            padding: 60px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
             color: #ffffff;
         }
 
-        .feature-highlight {
-            background: #2a2a2a;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border-left: 3px solid #00c805;
-            transition: all 0.3s ease;
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
         }
 
-        .feature-highlight:hover {
-            border-left-color: #ff6b6b;
-            transform: translateX(5px);
+        .tech-badge {
+            background: linear-gradient(135deg, #00c805, #00e006);
+            color: #0d0d0d;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         @media (max-width: 768px) {
-            header {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .navbar {
                 padding: 15px 20px;
             }
             
-            section {
-                margin: 20px;
-                padding: 25px;
-            }
-            
-            header ul {
+            .nav-content {
                 flex-direction: column;
+                gap: 15px;
             }
             
-            header ul li a {
-                display: block;
-                text-align: center;
+            .hero {
+                padding: 100px 20px 60px;
+            }
+            
+            .features {
+                padding: 0 20px;
+            }
+            
+            .tech-stack {
+                margin: 60px 20px;
+                padding: 40px 20px;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(0, 200, 5, 0.1), rgba(255, 107, 107, 0.1));
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0.6;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome To DataMiner, {{name}}</h1>
-        <ul>
-            {% if is_logged_in %}
-            <li><a href="/instructions">📄 Scan a PDF</a></li>
-            <li><a href="/earnings_report">📊 Earnings</a></li>
-            <li><a href="/profile">👤 Profile</a></li>
-            <li><a href="/compare">⚖️ Compare</a></li>
-            <li><a href="/logout">🚪 Log Out</a></li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-            {% endif %}
-        </ul>
-    </header>
-    <section>
-        <h2>Quick Start:</h2>
-        {% if is_logged_in %}
-        <div class="feature-highlight">
-            <p><strong>📄 Scan a PDF:</strong> Analyze 10-Q filings and extract key financial metrics from SEC documents.</p>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">SEC Filing Parser & Analyzer</a>
+            <div class="nav-buttons">
+                {% if is_logged_in %}
+                <a href="/instructions" class="nav-btn">📄 Scan Documents</a>
+                <a href="/earnings_report" class="nav-btn">📊 Analytics</a>
+                <a href="/compare" class="nav-btn">⚖️ Compare</a>
+                <a href="/profile" class="nav-btn">👤 Profile</a>
+                <a href="/logout" class="nav-btn">🚪 Logout</a>
+                {% else %}
+                <a href="/login" class="nav-btn">Login</a>
+                <a href="/register" class="nav-btn">Get Started</a>
+                {% endif %}
+            </div>
         </div>
-        <div class="feature-highlight">
-            <p><strong>⚖️ Compare:</strong> Compare financial variables across different industries and companies.</p>
-        </div>
-        <div class="feature-highlight">
-            <p><strong>📊 Earnings:</strong> View real-time stock data and earnings visualizations.</p>
-        </div>
-        {% else %}
-        <p>Please register or login to begin scanning documents and analyzing financial data!</p>
-        {% endif %}
-    </section>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>SEC Filing Parser & Analyzer</h1>
+            <p class="hero-subtitle">Transform Complex Financial Documents into Actionable Insights</p>
+            <p class="description">
+                Developed a distributed Python pipeline to process SEC 10-Qs, extracting structured financials via advanced pattern recognition for comprehensive earnings analysis. 
+                Launched a Flask web interface with interactive analytical models, enabling exploration with real-time metrics and intelligent insights.
+            </p>
+            <div class="cta-section">
+                {% if is_logged_in %}
+                <a href="/instructions" class="cta-btn cta-primary">📄 Start Analyzing</a>
+                <a href="/earnings_report" class="cta-btn cta-secondary">📊 View Analytics</a>
+                {% else %}
+                <a href="/register" class="cta-btn cta-primary">Get Started Free</a>
+                <a href="/login" class="cta-btn cta-secondary">Sign In</a>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">Real-Time Analytics</h3>
+                <p class="feature-description">
+                    Advanced financial data extraction and visualization with interactive charts and real-time market data integration.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔍</span>
+                <h3 class="feature-title">Intelligent Parsing</h3>
+                <p class="feature-description">
+                    Sophisticated pattern recognition algorithms to extract structured financial data from complex SEC 10-Q documents.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚖️</span>
+                <h3 class="feature-title">Cross-Industry Analysis</h3>
+                <p class="feature-description">
+                    Compare financial metrics across different sectors and companies with advanced analytical models and insights.
+                </p>
+            </div>
+        </section>
+
+        <section class="tech-stack">
+            <h2 class="tech-title">Built with Modern Technology</h2>
+            <div class="tech-badges">
+                <span class="tech-badge">Python</span>
+                <span class="tech-badge">Flask</span>
+                <span class="tech-badge">MongoDB</span>
+                <span class="tech-badge">yFinance API</span>
+                <span class="tech-badge">Chart.js</span>
+                <span class="tech-badge">PyMuPDF</span>
+                <span class="tech-badge">Advanced Regex</span>
+                <span class="tech-badge">Agile Development</span>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

@@ -1,14 +1,16 @@
 # SEC Filing Parser & Analyzer
 
-A financial document analysis tool that extracts insights from SEC filings and earnings reports.
+A sophisticated financial document analysis platform that transforms complex SEC 10-Q filings into actionable insights through advanced pattern recognition and interactive analytics.
 
 ## Tech Stack
 
+- **Python** - Core processing engine
 - **Flask** - Web framework
 - **MongoDB** - Database
 - **yFinance** - Stock data API
+- **Chart.js** - Interactive visualizations
 - **PyMuPDF** - PDF processing
-- **Matplotlib** - Data visualization
+- **Advanced Regex** - Pattern recognition
 
 ## Link
 
