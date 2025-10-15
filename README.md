@@ -1,124 +1,134 @@
-# Financial Insight Extractor
+# 📊 SEC Filing Parser & Analyzer
 
-# Project Setup Instructions
+A powerful financial document analysis tool that extracts and visualizes insights from SEC filings and earnings reports. Built with Flask, MongoDB, and real-time stock data integration.
 
-## Initial Setup
+## 🚀 Features
 
-1. **Install MongoDB:**
-   Open your terminal and run these commands to install MongoDB on macOS:
+- **PDF Document Scanning**: Parse and extract key financial metrics from 10-Q filings
+- **Earnings Analysis**: Real-time stock data visualization with yFinance integration
+- **Company Comparison**: Compare financial metrics across different companies and industries
+- **User Authentication**: Secure user management with encrypted password storage
+- **Interactive Charts**: Beautiful visualizations of financial data and trends
+
+## 📋 Prerequisites
+
+- Python 3.8+
+- MongoDB
+- pip (Python package manager)
+
+## ⚙️ Installation
+
+### 1. Install MongoDB
+
+On macOS:
+```bash
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb/brew/mongodb-community
+```
+
+For other operating systems, visit [MongoDB Installation Guide](https://docs.mongodb.com/manual/installation/)
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/Edgar0618/SEC-Filing-Parser-Analyzer.git
+cd "SEC Filing Parser & Analyzer"
+```
+
+### 3. Set Up Python Virtual Environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 4. Install Dependencies
+
+```bash
+pip install flask pymongo yfinance matplotlib pymupdf
+```
+
+Or use the requirements file (if available):
+```bash
+pip install -r requirements.txt
+```
+
+## 🏃 Running the Application
+
+1. Make sure MongoDB is running:
    ```bash
-   brew tap mongodb/brew
-   brew install mongodb-community
    brew services start mongodb/brew/mongodb-community
    ```
 
-## Configuration Steps
+2. Start the Flask application:
+   ```bash
+   python app.py
+   ```
 
-2. **Setup Python Environment:**
-   In the project root directory create a venv and install the necessary Python packages:
+3. Open your browser and navigate to:
+   ```
+   http://localhost:5000
+   ```
 
-   - Install Flask:
-     ```bash
-     pip install flask
-     ```
-   
-   - Install PyMongo:
-     ```bash
-     pip3 install pymongo
-     ```
+## 🗄️ Database Management (Optional)
 
-   - Install yFinance:
-     ```bash
-     pip3 install yfinance
-     ```
-   - Install matplotlib:
-     ```bash
-     pip3 install matplotlib
-     ```
-   - Install PyMuPDF:
-     ```bash
-     pip install pymupdf
-     ```
+### Using MongoDB Shell
 
-     ```
-     flask run
-     ```
+Install mongosh:
+```bash
+brew install mongosh
+```
 
-## Optional Tools
+Connect to the database:
+```bash
+mongosh
+use userDatabase
+```
 
-3. **Install and Use MongoDB Shell (mongosh):**
-   - To install `mongosh`, run:
-     ```bash
-     brew install mongosh
-     ```
-   - To start `mongosh`, simply type:
-     ```bash
-     mongosh
-     ```
-   - Once `mongosh` is running, connect to our database:
-     ```bash
-     use("userDatabase")
-     ```
-   - Example usage to view registered users:
-     ```bash
-     db.users.find({}, { password: 0, _id: 0 })
-     ```
+View registered users:
+```bash
+db.users.find({}, { password: 0, _id: 0 })
+```
 
-## Note
+## 📁 Project Structure
 
-- A `.gitignore` file has been created to ensure that `venv` and other  files are not tracked by our git pushes.
+```
+SEC-Filing-Parser-Analyzer/
+├── app.py                  # Main Flask application
+├── Database.py             # MongoDB connection and queries
+├── PasswordHashing.py      # Password encryption utilities
+├── templates/              # HTML templates
+│   ├── index.html
+│   ├── login.html
+│   ├── earnings_report.html
+│   └── ...
+└── forTesting/            # Testing files and examples
+```
 
-change
+## 🛠️ Tech Stack
 
-## Purpose
-The purpose of this project is to make 10q reports easier to understand for a normal person, as well as being able to compare and analyze different data from these reports purely by uploading a pdf. This program also supports account creation to save and view history of 10qs analyzed.
+- **Backend**: Flask (Python)
+- **Database**: MongoDB
+- **Financial Data**: yFinance API
+- **Data Visualization**: Matplotlib
+- **PDF Processing**: PyMuPDF
+- **Authentication**: Custom password hashing
 
-## List of Libraries
+## 📝 Notes
 
-- flask, yfinance, matplotlib, concurrent.futures, io, base64, fitz(pymupdf), re
-- Database, passwordhashing
+- The `.gitignore` file ensures virtual environments and sensitive files are not tracked
+- Make sure MongoDB is running before starting the application
+- Default Flask port is 5000 (can be changed in app.py)
 
-Here is the text with improved spacing and minor corrections for clarity and readability:
+## 🤝 Contributing
 
-Here is the complete text with the additional section included and formatted for clarity:
+Feel free to fork this repository and submit pull requests for any improvements!
 
-## Separation of Work
+## 📄 License
 
-- **Account MongoDB Database Setup: Eli Bendavid**
-  - Develop a secure MongoDB database to store user account information.
-  - Allow for Role-Based Access.
-  - Focuses on data encryption and secure login.
-  - Password hashing.
-  - Note: I have changed this requirement to comply with the Role-Based Access requirement (previously used SQLite).
+This project is open source and available under the MIT License.
 
-- **PDF Mounting for Scanner: Eli Bendavid**
-  - Create a page that allows registered users to add PDF reports for scanning.
-  - Allow users to preview these files before uploading.
-  - Allow these files to be saved in the profile section.
+---
 
-- **Earning Report Scanner: Edgar Guerrero and Gabriel Romanini**
-  - Develop the scanner functionality of the program. The scanner should accept 10Q reports in PDF format.
-  - Focus on extracting key financial information in a consistent format.
-  - Note: Changed requirements to use publicly available 10Q reports instead of a standardized template. This shouldn’t violate any Terms of Service.
-
-- **Live Market Data Section: Edgar Guerrero and Gabriel Romanini**
-- **General Stock Information Section: Edgar Guerrero and Gabriel Romanini**
-- **Comparison Page and Functionality: Trent Fetzer**
-  - Uses the yfinance import to get the average variables of different sectors.
-  - This will eventually be used as a tool to allow users to compare scanned 10Qs to industry averages.
-  - (NEW)
-
-- **Profile Page and Scan History: Josiah Ericksen**
-  - Create a profile page where registered users can view and change their information.
-  - Create a scan history page where users can view documents that they have scanned in the past.
-
-- **Simple Graphs/Analysis:**
-  - Once a document has been scanned, we will produce relevant charts/graphs of their respective variables.
-  - Year-over-Year Growth (Trent, Gabe): Bar graph comparing current earnings to the same quarter in previous years.
-  - Segment Performance (Josiah, Eli): Bar or pie charts showing revenue or profit by business segment.
-  - Revenue and Net Income Trends (Eli and Edgar): Line graphs showing quarterly or annual trends over several years.
-
-- **Flask HTML Webpages (so far):**
-  - Eli Bendavid: index.html, register.html, login.html, instructions.html
-  - Trent Fetzer: compare.html
-  - Josiah Ericksen: change_password.html, profile.html
+Built with ❤️ for financial analysis enthusiasts

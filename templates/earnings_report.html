@@ -3,124 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earnings Report</title>
+    <title>Earnings Report - DataMiner</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
         }
 
         header {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
+            background: #1a1a1a;
+            padding: 20px 40px;
+            border-bottom: 1px solid #2a2a2a;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
+
+        header h1 {
+            color: #00c805;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 500;
+        }
+
         header ul {
             list-style-type: none;
-            padding: 0;
+            display: flex;
+            gap: 15px;
         }
-        header ul li {
-            display: inline;
-            margin-right: 10px;
-        }
+
         header ul li a {
-            color: black;
+            color: #ffffff;
             text-decoration: none;
-            font-size: 16px;
-            padding: 8px 15px;
-            background: white;
-            border-radius: 5px;
-        }
-        header ul li a:hover {
-            background: lightgray;
+            font-size: 15px;
+            padding: 10px 20px;
+            background: #2a2a2a;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid #3a3a3a;
         }
 
-        .live-data{
-            text-align: center;
-            margin: 0px;
-            padding: 5px;
-            background: white;
-            color: black;
-            border-radius: 5px;
-            box-shadow: 0 0 10px black;
-            height: 10%;
+        header ul li a:hover {
+            background: #00c805;
+            color: #0d0d0d;
+            border-color: #00c805;
         }
-        .live-data ul{
-            display: inline-block;
+
+        .live-data {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            padding: 25px 40px;
+            margin: 0;
+            border-bottom: 1px solid #2a2a2a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .live-data h2 {
+            color: #00c805;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .live-data ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             padding: 0;
         }
 
-        .live-data li{
-            display: inline;
-            margin-right: 15px;
+        .live-data li {
+            background: #0d0d0d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #3a3a3a;
+            color: #d4d4d4;
         }
 
         section {
             display: flex;
             justify-content: space-between;
-            flex-direction: reow;
-            margin: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            flex-direction: row;
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 40px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid #2a2a2a;
+            gap: 40px;
         }
 
-        .form-container, .graph-container{
+        .form-container, .graph-container {
             flex: 1;
             padding: 10px;
-
         }
 
-        /* .graph-container {
-            flex: 1;
-            padding: 10px;
+        .graph-container {
             display: flex;
             align-items: center;
             justify-content: center;
-        } */
-
-        label, input, button {
-            display: block;
-            margin: 10px 0;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
         }
 
-        input[type="text"], button {
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d4d4d4;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00c805;
+            background: #333333;
         }
 
         button {
-            background: #333;
-            color: white;
+            width: 100%;
+            padding: 14px;
+            background: #00c805;
+            color: #0d0d0d;
             border: none;
+            border-radius: 24px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
         button:hover {
-            background: #555;
+            background: #00e006;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 200, 5, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         img {
             max-width: 100%; 
             height: auto;
+            border-radius: 8px;
         }
 
-        h1{
-            color: white;
-        }
-        h2 {
-            color: black;
+        @media (max-width: 968px) {
+            section {
+                flex-direction: column;
+            }
+            
+            header {
+                padding: 15px 20px;
+            }
+            
+            header ul {
+                flex-direction: column;
+            }
+
+            .live-data {
+                padding: 20px;
+            }
+
+            .live-data ul {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Earnings Report</h1>
+        <h1>📊 Earnings Report</h1>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/profile">Profile</a></li>
@@ -128,33 +205,33 @@
         </ul>
     </header>
     
-        <div class="live-data">
-        <h2>Live Market Data</h1>
+    <div class="live-data">
+        <h2>📈 Live Market Data</h2>
         <ul>
             {% for ticker, price in data.items() %}
-            <li>{{ ticker }}: {{ price }}</li>
+            <li><strong>{{ ticker }}:</strong> {{ price }}</li>
             {% endfor %}
         </ul>
-        </div>
+    </div>
     <section>
         <div class="graph-container">
             {% if image %}
                 <img src="data:image/png;base64,{{image}}" alt="earnings graph">
             {% else %}
-                <p>No graph available.</p>
+                <p style="color: #d4d4d4;">No graph available. Submit quarterly data to generate.</p>
             {% endif %}
         </div>
         <div class="form-container">
             <form method="post">
-                <label for="Q1">Q1:</label>
-                <input type="text" id="Q1" name="Q1" value="{{ request.form['Q1'] }}">
-                <label for="Q2">Q2:</label>
-                <input type="text" id="Q2" name="Q2" value="{{ request.form['Q2'] }}">
-                <label for="Q3">Q3:</label>
-                <input type="text" id="Q3" name="Q3" value="{{ request.form['Q3'] }}">
-                <label for="Q4">Q4:</label>
-                <input type="text" id="Q4" name="Q4" value="{{ request.form['Q4'] }}">
-                <button type="submit">Submit</button>
+                <label for="Q1">Q1 Earnings:</label>
+                <input type="text" id="Q1" name="Q1" value="{{ request.form['Q1'] }}" placeholder="Enter Q1 value">
+                <label for="Q2">Q2 Earnings:</label>
+                <input type="text" id="Q2" name="Q2" value="{{ request.form['Q2'] }}" placeholder="Enter Q2 value">
+                <label for="Q3">Q3 Earnings:</label>
+                <input type="text" id="Q3" name="Q3" value="{{ request.form['Q3'] }}" placeholder="Enter Q3 value">
+                <label for="Q4">Q4 Earnings:</label>
+                <input type="text" id="Q4" name="Q4" value="{{ request.form['Q4'] }}" placeholder="Enter Q4 value">
+                <button type="submit">Generate Chart</button>
             </form>
         </div>
     </section>
