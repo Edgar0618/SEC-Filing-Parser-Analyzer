@@ -164,16 +164,34 @@
 <body>
     <header>
         <h1>📄 Document Analysis Center</h1>
-        <h2>Hello, {{name}}!</h2>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/compare">Compare</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/logout">Log Out</a></li>
         </ul>
-        <div id="ticker" style="margin-top:15px; overflow:hidden; white-space:nowrap; border-top:1px solid #2a2a2a; padding-top:10px;">
-            <div id="ticker-content" style="display:inline-block; animation: scroll-left 30s linear infinite;">
-                Loading live market data...
+        <div style="margin-top:15px; border-top:1px solid #2a2a2a; padding-top:10px;">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                {
+                  "symbols": [
+                    {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+                    {"proName": "NASDAQ:NDX", "title": "NASDAQ 100"},
+                    {"proName": "NASDAQ:AAPL", "title": "Apple"},
+                    {"proName": "NASDAQ:MSFT", "title": "Microsoft"},
+                    {"proName": "NASDAQ:NVDA", "title": "NVIDIA"},
+                    {"proName": "NASDAQ:AMZN", "title": "Amazon"},
+                    {"proName": "NASDAQ:TSLA", "title": "Tesla"},
+                    {"proName": "NASDAQ:GOOGL", "title": "Alphabet"}
+                  ],
+                  "showSymbolLogo": true,
+                  "colorTheme": "dark",
+                  "isTransparent": true,
+                  "displayMode": "adaptive",
+                  "locale": "en"
+                }
+                </script>
             </div>
         </div>
     </header>
@@ -187,24 +205,6 @@
             <input type="submit" value="Upload & Analyze">
         </form>
     </section>
-    <style>
-    @keyframes scroll-left {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
-    </style>
-    <script>
-    fetch('/live_ticker').then(r=>r.json()).then(d=>{
-        const el = document.getElementById('ticker-content');
-        if (d && d.items) {
-            el.textContent = d.items.join('   •   ');
-        } else {
-            el.textContent = 'Market data unavailable';
-        }
-    }).catch(()=>{
-        const el = document.getElementById('ticker-content');
-        el.textContent = 'Market data unavailable';
-    });
-    </script>
+    <!-- TradingView handles ticker data and motion -->
 </body>
 </html>
