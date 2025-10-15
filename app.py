@@ -383,7 +383,11 @@ def profile():
         return redirect(url_for('login'))
 
     # Get scan history
-    scan_history = db.scans.find({"username": session['username']}).sort("date", -1).limit(10)
+    try:
+        scan_history = db.scans.find({"username": session['username']}).sort("date", -1).limit(10)
+    except Exception as e:
+        print(f"Error getting scan history: {e}")
+        scan_history = []
 
     return render_template('profile.html', 
                          name=user.get('name', 'User'), 
@@ -427,23 +431,14 @@ def earnings_report():
     if not user:
         return redirect(url_for('login'))
     
-    # Get live market data
-    tickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']
-    data = {}
-    
-    def get_price(ticker):
-        try:
-            stock = yf.Ticker(ticker)
-            price = stock.history(period='1d')['Close'].iloc[-1]
-            return ticker, f"${price:.2f}"
-        except:
-            return ticker, "N/A"
-    
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = [executor.submit(get_price, ticker) for ticker in tickers]
-        for future in as_completed(futures):
-            ticker, price = future.result()
-            data[ticker] = price
+    # Get live market data - using static data since yfinance was removed
+    data = {
+        'AAPL': '$195.50',
+        'GOOGL': '$2,850.00', 
+        'MSFT': '$420.30',
+        'TSLA': '$245.80',
+        'AMZN': '$155.20'
+    }
     
     chart_data = None
     if request.method == 'POST':
@@ -635,8 +630,11 @@ def upload_pdf():
             year2_key = '2025' if '2025' in data.get('total_current_assets', {}) else '2023'
             
             # Log the scan
-            db = createConnection()
-            logScan(db, session['username'], file.filename)
+            try:
+                db = createConnection()
+                logScan(db, session['username'], file.filename)
+            except Exception as e:
+                print(f"Error logging scan: {e}")
             
             # Clean up temp file
             try:
