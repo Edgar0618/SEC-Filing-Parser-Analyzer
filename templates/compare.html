@@ -191,8 +191,30 @@
             <li><a href="/profile">Profile</a></li>
             <li><a href="/logout">Log Out</a></li>
         </ul>
-        <div id="ticker" style="margin-top:12px; overflow:hidden; white-space:nowrap; border-top:1px solid #2a2a2a; padding-top:10px;">
-            <div id="ticker-content" style="display:inline-block; animation: scroll-left 60s linear infinite;">Loading live market data...</div>
+        <div style="margin-top:12px; border-top:1px solid #2a2a2a; padding-top:10px;">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                {
+                  "symbols": [
+                    {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+                    {"proName": "NASDAQ:NDX", "title": "NASDAQ 100"},
+                    {"proName": "CURRENCYCOM:US30", "title": "Dow 30"},
+                    {"proName": "NASDAQ:AAPL", "title": "Apple"},
+                    {"proName": "NASDAQ:MSFT", "title": "Microsoft"},
+                    {"proName": "NASDAQ:NVDA", "title": "NVIDIA"},
+                    {"proName": "NASDAQ:AMZN", "title": "Amazon"},
+                    {"proName": "NASDAQ:TSLA", "title": "Tesla"},
+                    {"proName": "NASDAQ:GOOGL", "title": "Alphabet"}
+                  ],
+                  "showSymbolLogo": true,
+                  "colorTheme": "dark",
+                  "isTransparent": true,
+                  "displayMode": "adaptive",
+                  "locale": "en"
+                }
+                </script>
+            </div>
         </div>
     </header>
     <form action="/compare" method="post">
