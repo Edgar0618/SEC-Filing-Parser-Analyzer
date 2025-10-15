@@ -578,18 +578,16 @@ _ticker_cache = {'ts': 0, 'items': []}
 
 @app.route('/live_ticker')
 def live_ticker():
-    # small cache window to reduce delay
-    if time.time() - _ticker_cache['ts'] < 15 and _ticker_cache['items']:
+    # 30s cache for stability
+    if time.time() - _ticker_cache['ts'] < 30 and _ticker_cache['items']:
         return jsonify({'items': _ticker_cache['items']})
 
     # Symbols and display names
+    # Keep a lean list for fast load; add the rest later via rotation if desired
     symbols = [
-        '^DJI', '^GSPC', '^IXIC', '^VIX', 'SPY', 'QQQ',
-        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD',
-        'BRK-B', 'JPM', 'BAC', 'COST', 'WMT', 'NKE', 'UNH', 'XOM', 'CVX', 'V', 'MA',
-        'INTC', 'ORCL', 'PYPL', 'ABNB', 'UBER', 'SHOP', 'SNOW', 'PLTR', 'MCD', 'SBUX',
-        'KO', 'PEP', 'PG', 'DIS', 'BA', 'GE', 'GS', 'ADBE', 'CRM', 'TSM',
-        'BTC-USD', 'ETH-USD', 'GC=F', 'SI=F', 'CL=F', 'GLD', 'TLT', 'EURUSD=X', 'USDJPY=X'
+        '^DJI', '^GSPC', '^IXIC', 'SPY', 'QQQ',
+        'AAPL', 'MSFT', 'NVDA', 'AMZN', 'TSLA', 'META', 'GOOGL',
+        'BTC-USD', 'ETH-USD', 'GC=F', 'CL=F'
     ]
     display = {
         '^DJI': 'DOW', '^GSPC': 'S&P 500', '^IXIC': 'NASDAQ', '^VIX': 'VIX',
@@ -602,7 +600,7 @@ def live_ticker():
 
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'}
-        resp = requests.get(url, params={'symbols': ','.join(symbols)}, headers=headers, timeout=8)
+        resp = requests.get(url, params={'symbols': ','.join(symbols)}, headers=headers, timeout=6)
         data = resp.json().get('quoteResponse', {}).get('result', [])
         by_symbol = {q.get('symbol'): q for q in data}
 
@@ -610,19 +608,6 @@ def live_ticker():
             q = by_symbol.get(s, {})
             price = q.get('regularMarketPrice')
             change_pct = q.get('regularMarketChangePercent')
-
-            # Fallback with yfinance if Yahoo response is missing
-            if price is None or change_pct is None:
-                try:
-                    t = yf.Ticker(s)
-                    hist = t.history(period='2d')
-                    if not hist.empty:
-                        price = float(hist['Close'].iloc[-1])
-                        prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else price
-                        change_pct = ((price - prev) / prev) * 100 if prev else 0
-                except Exception:
-                    price = None
-                    change_pct = None
 
             if price is None or change_pct is None:
                 items.append({'text': f"{display.get(s, s)}: N/A", 'change': 0})
@@ -633,8 +618,6 @@ def live_ticker():
                     text = f"{name}: ${price:,.0f} ({sign}{change_pct:.2f}%)"
                 elif s in ('GC=F','SI=F','CL=F'):
                     text = f"{name}: ${price:,.2f} ({sign}{change_pct:.2f}%)"
-                elif s in ('EURUSD=X','USDJPY=X'):
-                    text = f"{name}: {price:,.4f} ({sign}{change_pct:.2f}%)"
                 else:
                     text = f"{name}: {price:,.2f} ({sign}{change_pct:.2f}%)"
                 items.append({'text': text, 'change': float(change_pct)})
