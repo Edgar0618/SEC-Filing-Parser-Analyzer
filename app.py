@@ -587,7 +587,9 @@ def live_ticker():
         '^DJI', '^GSPC', '^IXIC', '^VIX', 'SPY', 'QQQ',
         'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD',
         'BRK-B', 'JPM', 'BAC', 'COST', 'WMT', 'NKE', 'UNH', 'XOM', 'CVX', 'V', 'MA',
-        'BTC-USD', 'ETH-USD', 'GC=F', 'SI=F', 'CL=F'
+        'INTC', 'ORCL', 'PYPL', 'ABNB', 'UBER', 'SHOP', 'SNOW', 'PLTR', 'MCD', 'SBUX',
+        'KO', 'PEP', 'PG', 'DIS', 'BA', 'GE', 'GS', 'ADBE', 'CRM', 'TSM',
+        'BTC-USD', 'ETH-USD', 'GC=F', 'SI=F', 'CL=F', 'GLD', 'TLT', 'EURUSD=X', 'USDJPY=X'
     ]
     display = {
         '^DJI': 'DOW', '^GSPC': 'S&P 500', '^IXIC': 'NASDAQ', '^VIX': 'VIX',
@@ -599,7 +601,8 @@ def live_ticker():
     items = []
 
     try:
-        resp = requests.get(url, params={'symbols': ','.join(symbols)}, timeout=5)
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'}
+        resp = requests.get(url, params={'symbols': ','.join(symbols)}, headers=headers, timeout=8)
         data = resp.json().get('quoteResponse', {}).get('result', [])
         by_symbol = {q.get('symbol'): q for q in data}
 
@@ -630,6 +633,8 @@ def live_ticker():
                     text = f"{name}: ${price:,.0f} ({sign}{change_pct:.2f}%)"
                 elif s in ('GC=F','SI=F','CL=F'):
                     text = f"{name}: ${price:,.2f} ({sign}{change_pct:.2f}%)"
+                elif s in ('EURUSD=X','USDJPY=X'):
+                    text = f"{name}: {price:,.4f} ({sign}{change_pct:.2f}%)"
                 else:
                     text = f"{name}: {price:,.2f} ({sign}{change_pct:.2f}%)"
                 items.append({'text': text, 'change': float(change_pct)})
