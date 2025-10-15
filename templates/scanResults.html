@@ -240,33 +240,33 @@
         <table>
             <tr>
                 <th class="blue-header">Financial Metric</th>
-                <th class="blue-header">2022 (in million USD)</th>
-                <th class="blue-header">2023 (in million USD)</th>
+                <th class="blue-header">2024 (in million USD)</th>
+                <th class="blue-header">2025 (in million USD)</th>
             </tr>
             <tr>
                 <td>Total Current Assets</td>
-                <td>{{ data['total_current_assets']['2022']}}</td>
-                <td>{{ data['total_current_assets']['2023'] }}</td>
+                <td>{{ data['total_current_assets'][year1_key]}}</td>
+                <td>{{ data['total_current_assets'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Total Assets</td>
-                <td>{{ data['total_assets']['2022'] }}</td>
-                <td>{{ data['total_assets']['2023'] }}</td>
+                <td>{{ data['total_assets'][year1_key] }}</td>
+                <td>{{ data['total_assets'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Total Current Liabilities</td>
-                <td>{{ data['total_current_liabilities']['2022'] }}</td>
-                <td>{{ data['total_current_liabilities']['2023'] }}</td>
+                <td>{{ data['total_current_liabilities'][year1_key] }}</td>
+                <td>{{ data['total_current_liabilities'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Total Stockholders' Equity</td>
-                <td>{{  data['total_stockholders_equity']['2022'] }}</td>
-                <td>{{  data['total_stockholders_equity']['2023'] }}</td>
+                <td>{{  data['total_stockholders_equity'][year1_key] }}</td>
+                <td>{{  data['total_stockholders_equity'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Total Liabilities and Stockholders' Equity</td>
-                <td>{{ data['total_liabilities_and_stockholders_equity']['2022'] }}</td>
-                <td>{{ data['total_liabilities_and_stockholders_equity']['2023'] }}</td>
+                <td>{{ data['total_liabilities_and_stockholders_equity'][year1_key] }}</td>
+                <td>{{ data['total_liabilities_and_stockholders_equity'][year2_key] }}</td>
             </tr>
         </table>
     </div>
@@ -277,38 +277,38 @@
         <table>
             <tr>
                 <th class="red-header">Financial Metric</th>
-                <th class="red-header">2022 (in million USD)</th>
-                <th class="red-header">2023 (in million USD)</th>
+                <th class="red-header">2024 (in million USD)</th>
+                <th class="red-header">2025 (in million USD)</th>
             </tr>
             <tr>
                 <td>CASH, CASH EQUIVALENTS, AND RESTRICTED CASH, BEGINNING OF PERIOD</td>
-                <td>{{ data['cash_beginning']['2022'] }}</td>
-                <td>{{ data['cash_beginning']['2023'] }}</td>
+                <td>{{ data['cash_beginning'][year1_key] }}</td>
+                <td>{{ data['cash_beginning'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Net income (loss)</td>
-                <td>{{ data['net_income']['2022'] }}</td>
-                <td>{{ data['net_income']['2023'] }}</td>
+                <td>{{ data['net_income'][year1_key] }}</td>
+                <td>{{ data['net_income'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Net cash provided by (used in) operating activities</td>
-                <td>{{ data['net_operating_cash']['2022'] }}</td>
-                <td>{{ data['net_operating_cash']['2023'] }}</td>
+                <td>{{ data['net_operating_cash'][year1_key] }}</td>
+                <td>{{ data['net_operating_cash'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Net cash used in investing activities</td>
-                <td>{{ data['net_investing_cash']['2022'] }}</td>
-                <td>{{ data['net_investing_cash']['2023'] }}</td>
+                <td>{{ data['net_investing_cash'][year1_key] }}</td>
+                <td>{{ data['net_investing_cash'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Net cash provided by (used in) financing activities</td>
-                <td>{{ data['net_financing_cash']['2022'] }}</td>
-                <td>{{ data['net_financing_cash']['2023'] }}</td>
+                <td>{{ data['net_financing_cash'][year1_key] }}</td>
+                <td>{{ data['net_financing_cash'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>CASH, CASH EQUIVALENTS, AND RESTRICTED CASH, END OF PERIOD</td>
-                <td>{{ data['cash_end']['2022'] }}</td>
-                <td>{{ data['cash_end']['2023'] }}</td>
+                <td>{{ data['cash_end'][year1_key] }}</td>
+                <td>{{ data['cash_end'][year2_key] }}</td>
             </tr>
         </table>
     </div>
@@ -319,33 +319,33 @@
         <table>
             <tr>
                 <th class="orange-header">Financial Metric</th>
-                <th class="orange-header">2022 (in million USD)</th>
-                <th class="orange-header">2023 (in million USD)</th>
+                <th class="orange-header">2024 (in million USD)</th>
+                <th class="orange-header">2025 (in million USD)</th>
             </tr>
             <tr>
                 <td>Total Net Sales</td>
-                <td>{{ data['total_net_sales']['2022'] }}</td>
-                <td>{{ data['total_net_sales']['2023'] }}</td>
+                <td>{{ data['total_net_sales'][year1_key] }}</td>
+                <td>{{ data['total_net_sales'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Total Operating Expenses</td>
-                <td>{{ data['total_operating_expenses']['2022'] }}</td>
-                <td>{{ data['total_operating_expenses']['2023'] }}</td>
+                <td>{{ data['total_operating_expenses'][year1_key] }}</td>
+                <td>{{ data['total_operating_expenses'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Net income (loss)</td>
-                <td>{{ data['net_income']['2022'] }}</td>
-                <td>{{ data['net_income']['2023'] }}</td>
+                <td>{{ data['net_income'][year1_key] }}</td>
+                <td>{{ data['net_income'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Weighted Average Shares Basic</td>
-                <td>{{ data['weighted_average_shares_basic']['2022'] }}</td>
-                <td>{{ data['weighted_average_shares_basic']['2023'] }}</td>
+                <td>{{ data['weighted_average_shares_basic'][year1_key] }}</td>
+                <td>{{ data['weighted_average_shares_basic'][year2_key] }}</td>
             </tr>
             <tr>
                 <td>Diluted Average Shares Basic</td>
-                <td>{{ data['diluted_average_shares_basic']['2022'] }}</td>
-                <td>{{ data['diluted_average_shares_basic']['2023'] }}</td>
+                <td>{{ data['diluted_average_shares_basic'][year1_key] }}</td>
+                <td>{{ data['diluted_average_shares_basic'][year2_key] }}</td>
             </tr>
         </table>
     </div>

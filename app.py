@@ -386,7 +386,7 @@ def profile():
     scan_history = db.scans.find({"username": session['username']}).sort("date", -1).limit(10)
 
     return render_template('profile.html', 
-                         name=user['name'], 
+                         name=user.get('name', 'User'), 
                          username=user['username'],
                          scan_history=scan_history)
 
@@ -630,6 +630,10 @@ def upload_pdf():
             operations_chart = generate_operations_chart(data)
             cash_flows_chart = generate_cash_flows_chart(data)
             
+            # Determine year keys for template
+            year1_key = '2024' if '2024' in data.get('total_current_assets', {}) else '2022'
+            year2_key = '2025' if '2025' in data.get('total_current_assets', {}) else '2023'
+            
             # Log the scan
             db = createConnection()
             logScan(db, session['username'], file.filename)
@@ -642,6 +646,8 @@ def upload_pdf():
             
             return render_template('scanResults.html',
                                  data=data,
+                                 year1_key=year1_key,
+                                 year2_key=year2_key,
                                  live_market_data=live_market_data,
                                  ticker_info=ticker_info,
                                  balance_sheet_chart=json.dumps(balance_sheet_chart),
