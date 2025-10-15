@@ -159,6 +159,9 @@
         <input type="text" id="username" name="username" required>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
+        <!-- Optional/hidden fields to satisfy backend defaults without confusing the user -->
+        <input type="hidden" name="name" value="">
+        <input type="hidden" name="date_of_birth" value="">
         <input type="submit" value="Register">
     </form>
     {% if error %}

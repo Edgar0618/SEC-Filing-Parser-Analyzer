@@ -341,15 +341,21 @@ def register():
         try:
             db = createConnection()
             createCollection(db)
-            username = request.form['username']
-            password = request.form['password']
-            name = request.form['name']
-            date_of_birth = request.form['date_of_birth']
+            # Support minimal forms (username/password only)
+            username = request.form.get('username', '').strip()
+            password = request.form.get('password', '').strip()
+            # Optional fields defaulted for simplified UI
+            name = request.form.get('name', username)
+            date_of_birth = request.form.get('date_of_birth', '')
             admin_checked = 'admin' in request.form
             secret_key = request.form.get('secret_key', '')
 
             correct_secret_key = "admin"
             is_admin = admin_checked and secret_key == correct_secret_key
+
+            # Basic validation
+            if not username or not password:
+                raise Exception('Username and password are required')
 
             success, message = registerUser(db, username, password, name, date_of_birth, is_admin)
             if success:
