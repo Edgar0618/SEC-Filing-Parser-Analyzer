@@ -7,7 +7,7 @@ A sophisticated financial document analysis platform that transforms complex SEC
 - **Python** - Core processing engine
 - **Flask** - Web framework
 - **MongoDB** - Database
-- **yFinance** - Stock data API
+- **TradingView** - Live market data
 - **Chart.js** - Interactive visualizations
 - **PyMuPDF** - PDF processing
 - **Advanced Regex** - Pattern recognition
