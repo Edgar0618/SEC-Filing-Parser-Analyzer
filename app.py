@@ -578,18 +578,21 @@ _ticker_cache = {'ts': 0, 'items': []}
 
 @app.route('/live_ticker')
 def live_ticker():
-    if time.time() - _ticker_cache['ts'] < 60 and _ticker_cache['items']:
+    # small cache window to reduce delay
+    if time.time() - _ticker_cache['ts'] < 15 and _ticker_cache['items']:
         return jsonify({'items': _ticker_cache['items']})
 
     # Symbols and display names
     symbols = [
         '^DJI', '^GSPC', '^IXIC', '^VIX', 'SPY', 'QQQ',
-        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD',
+        'BRK-B', 'JPM', 'BAC', 'COST', 'WMT', 'NKE', 'UNH', 'XOM', 'CVX', 'V', 'MA',
         'BTC-USD', 'ETH-USD', 'GC=F', 'SI=F', 'CL=F'
     ]
     display = {
         '^DJI': 'DOW', '^GSPC': 'S&P 500', '^IXIC': 'NASDAQ', '^VIX': 'VIX',
-        'GC=F': 'GOLD', 'SI=F': 'SILVER', 'CL=F': 'CRUDE'
+        'GC=F': 'GOLD', 'SI=F': 'SILVER', 'CL=F': 'CRUDE',
+        'BRK-B': 'BRK.B'
     }
 
     url = 'https://query1.finance.yahoo.com/v7/finance/quote'
