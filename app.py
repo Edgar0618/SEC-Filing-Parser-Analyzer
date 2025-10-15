@@ -4,6 +4,7 @@ from PasswordHashing import hash_password, verify_password
 import yfinance as yf
 # Removed matplotlib - using Chart.js instead for better performance and smaller bundle size
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import requests
 import json
 import fitz  # PyMuPDF
 import re
@@ -571,6 +572,21 @@ def instructions():
     
     return render_template('instructions.html', name=user['name'])
 
+@app.route('/live_ticker')
+def live_ticker():
+    # Lightweight ticker using yfinance; tolerate failures
+    tickers = ['^DJI', '^GSPC', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+    items = []
+    for t in tickers:
+        try:
+            stock = yf.Ticker(t)
+            hist = stock.history(period='1d')
+            price = hist['Close'].iloc[-1]
+            items.append(f"{t}: ${price:.2f}")
+        except Exception:
+            items.append(f"{t}: N/A")
+    return jsonify({ 'items': items })
+
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
     if 'username' not in session:
@@ -585,11 +601,13 @@ def upload_pdf():
     
     if file and allowed_file(file.filename):
         try:
-            # Save uploaded file temporarily
-            file.save(f"temp_{file.filename}")
+            # Use serverless writable tmp dir
+            import os
+            tmp_path = os.path.join('/tmp', f"{file.filename}")
+            file.save(tmp_path)
             
             # Extract financial data
-            data = extract_financial_data(f"temp_{file.filename}")
+            data = extract_financial_data(tmp_path)
             
             # Get live market data
             tickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']
@@ -628,8 +646,10 @@ def upload_pdf():
             logScan(db, session['username'], file.filename)
             
             # Clean up temp file
-            import os
-            os.remove(f"temp_{file.filename}")
+            try:
+                os.remove(tmp_path)
+            except Exception:
+                pass
             
             return render_template('scanResults.html',
                                  data=data,

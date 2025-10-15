@@ -7,7 +7,10 @@ except Exception:
     class errors:
         class DuplicateKeyError(Exception):
             pass
-    MongoClient = None
+MongoClient = None
+
+# Singleton mock DB instance
+_MOCK_DB_INSTANCE = None
 
 from PasswordHashing import hash_password
 import datetime
@@ -21,7 +24,10 @@ def createConnection():
     # If pymongo not present, use mock DB immediately
     if not HAS_PYMONGO:
         print("PyMongo not installed. Using in-memory mock database.")
-        return MockDatabase()
+        globals_ref = globals()
+        if globals_ref.get('_MOCK_DB_INSTANCE') is None:
+            globals_ref['_MOCK_DB_INSTANCE'] = MockDatabase()
+        return globals_ref['_MOCK_DB_INSTANCE']
 
     try:
         client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
@@ -31,8 +37,11 @@ def createConnection():
         return db
     except Exception as e:
         print("MongoDB connection failed: " + str(e))
-        # Return a mock database for development/testing
-        return MockDatabase()
+        # Return a singleton mock database for development/testing
+        globals_ref = globals()
+        if globals_ref.get('_MOCK_DB_INSTANCE') is None:
+            globals_ref['_MOCK_DB_INSTANCE'] = MockDatabase()
+        return globals_ref['_MOCK_DB_INSTANCE']
 
 class MockDatabase:
     """Mock database for development when MongoDB is not available"""
@@ -137,6 +146,7 @@ def registerUser(db, username, password, name, date_of_birth, is_admin=False):
         return False, "Username already exists. Try a different one."
 
 def login(db, username, hashed_password):
+    # In our app, we store SHA-256 hashes. hashed_password is already hashed.
     user = db.users.find_one({"username": username, "password": hashed_password})
     if user:
         print(f"Welcome back {user['name']}!")
