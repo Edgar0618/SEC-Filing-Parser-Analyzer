@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quarterly Earnings Report - DataMiner</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -125,10 +126,10 @@
             background-color: #333333;
         }
 
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
             margin-top: 20px;
         }
 
@@ -148,6 +149,10 @@
 
             th, td {
                 padding: 10px;
+            }
+
+            .chart-container {
+                height: 300px;
             }
         }
     </style>
@@ -294,18 +299,140 @@
 
     <!-- Charts -->
     <div class="report-container">
-        <h2>Consolidating Balance Sheet</h2>
-        <img src="data:image/png;base64,{{ imageCBS }}" alt="Assets and Liabilities Graph">
+        <h2>Consolidating Balance Sheet Chart</h2>
+        <div class="chart-container">
+            <canvas id="balanceSheetChart"></canvas>
+        </div>
     </div>
 
     <div class="report-container">
-        <h2>Consolidated Statements of Operations Graph</h2>
-        <img src="data:image/png;base64,{{ imageCSO }}" alt="Operations Graph">
+        <h2>Consolidated Statements of Operations Chart</h2>
+        <div class="chart-container">
+            <canvas id="operationsChart"></canvas>
+        </div>
     </div>
 
     <div class="report-container">
-        <h2>Consolidated Statements of Cash Flows</h2>
-        <img src="data:image/png;base64,{{ imageCSCF }}" alt="Financial Data Graph">
+        <h2>Consolidated Statements of Cash Flows Chart</h2>
+        <div class="chart-container">
+            <canvas id="cashFlowsChart"></canvas>
+        </div>
     </div>
+
+    <script>
+        // Balance Sheet Chart
+        const balanceSheetData = {{ balance_sheet_chart | safe }};
+        const balanceSheetCtx = document.getElementById('balanceSheetChart').getContext('2d');
+        new Chart(balanceSheetCtx, {
+            type: 'bar',
+            data: balanceSheetData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            maxRotation: 45
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Operations Chart
+        const operationsData = {{ operations_chart | safe }};
+        const operationsCtx = document.getElementById('operationsChart').getContext('2d');
+        new Chart(operationsCtx, {
+            type: 'line',
+            data: operationsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            maxRotation: 45
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cash Flows Chart
+        const cashFlowsData = {{ cash_flows_chart | safe }};
+        const cashFlowsCtx = document.getElementById('cashFlowsChart').getContext('2d');
+        new Chart(cashFlowsCtx, {
+            type: 'line',
+            data: cashFlowsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            maxRotation: 45
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#3a3a3a'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
