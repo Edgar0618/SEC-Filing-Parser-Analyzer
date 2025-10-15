@@ -185,143 +185,86 @@ def extract_financial_data(pdf_path):
         text += page.get_text()
     doc.close()
 
-    # Financial data extraction patterns
+    # Financial data extraction patterns - more flexible to handle different formats
     data = {}
     
-    # Current Assets
-    current_assets_2022 = re.search(r'Total current assets.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    current_assets_2023 = re.search(r'Total current assets.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
+    # Helper function to extract values from table format
+    def extract_table_values(pattern, text):
+        # Try multiple patterns for different table formats
+        patterns = [
+            # Pattern 1: "Metric Name    2022    2023"
+            pattern + r'\s+(\d+(?:,\d{3})*(?:\.\d{2})?)\s+(\d+(?:,\d{3})*(?:\.\d{2})?)',
+            # Pattern 2: "Metric Name    2022 (in million USD)    2023 (in million USD)"
+            pattern + r'.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?).*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)',
+            # Pattern 3: "Metric Name    $123,456    $789,012"
+            pattern + r'\s+\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)\s+\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)',
+        ]
+        
+        for p in patterns:
+            match = re.search(p, text, re.IGNORECASE | re.DOTALL)
+            if match:
+                return match.group(1).replace(',', ''), match.group(2).replace(',', '')
+        return '0', '0'
     
-    data['total_current_assets'] = {
-        '2022': current_assets_2022.group(1).replace(',', '') if current_assets_2022 else '0',
-        '2023': current_assets_2023.group(1).replace(',', '') if current_assets_2023 else '0'
-    }
+    # Current Assets
+    val_2022, val_2023 = extract_table_values(r'Total current assets', text)
+    data['total_current_assets'] = {'2022': val_2022, '2023': val_2023}
     
     # Total Assets
-    total_assets_2022 = re.search(r'Total assets.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    total_assets_2023 = re.search(r'Total assets.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_assets'] = {
-        '2022': total_assets_2022.group(1).replace(',', '') if total_assets_2022 else '0',
-        '2023': total_assets_2023.group(1).replace(',', '') if total_assets_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total assets', text)
+    data['total_assets'] = {'2022': val_2022, '2023': val_2023}
     
     # Current Liabilities
-    current_liabilities_2022 = re.search(r'Total current liabilities.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    current_liabilities_2023 = re.search(r'Total current liabilities.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_current_liabilities'] = {
-        '2022': current_liabilities_2022.group(1).replace(',', '') if current_liabilities_2022 else '0',
-        '2023': current_liabilities_2023.group(1).replace(',', '') if current_liabilities_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total current liabilities', text)
+    data['total_current_liabilities'] = {'2022': val_2022, '2023': val_2023}
     
     # Stockholders Equity
-    stockholders_equity_2022 = re.search(r'Total stockholders\' equity.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    stockholders_equity_2023 = re.search(r'Total stockholders\' equity.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_stockholders_equity'] = {
-        '2022': stockholders_equity_2022.group(1).replace(',', '') if stockholders_equity_2022 else '0',
-        '2023': stockholders_equity_2023.group(1).replace(',', '') if stockholders_equity_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total stockholders\' equity', text)
+    data['total_stockholders_equity'] = {'2022': val_2022, '2023': val_2023}
     
     # Total Liabilities and Stockholders Equity
-    total_liab_equity_2022 = re.search(r'Total liabilities and stockholders\' equity.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    total_liab_equity_2023 = re.search(r'Total liabilities and stockholders\' equity.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_liabilities_and_stockholders_equity'] = {
-        '2022': total_liab_equity_2022.group(1).replace(',', '') if total_liab_equity_2022 else '0',
-        '2023': total_liab_equity_2023.group(1).replace(',', '') if total_liab_equity_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total liabilities and stockholders\' equity', text)
+    data['total_liabilities_and_stockholders_equity'] = {'2022': val_2022, '2023': val_2023}
     
     # Net Income
-    net_income_2022 = re.search(r'Net income.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    net_income_2023 = re.search(r'Net income.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['net_income'] = {
-        '2022': net_income_2022.group(1).replace(',', '') if net_income_2022 else '0',
-        '2023': net_income_2023.group(1).replace(',', '') if net_income_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Net income', text)
+    data['net_income'] = {'2022': val_2022, '2023': val_2023}
     
     # Cash flows
-    cash_beginning_2022 = re.search(r'Cash, cash equivalents.*?beginning.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    cash_beginning_2023 = re.search(r'Cash, cash equivalents.*?beginning.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['cash_beginning'] = {
-        '2022': cash_beginning_2022.group(1).replace(',', '') if cash_beginning_2022 else '0',
-        '2023': cash_beginning_2023.group(1).replace(',', '') if cash_beginning_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Cash, cash equivalents.*?beginning', text)
+    data['cash_beginning'] = {'2022': val_2022, '2023': val_2023}
     
     # Operating cash
-    operating_cash_2022 = re.search(r'Net cash provided by.*?operating.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    operating_cash_2023 = re.search(r'Net cash provided by.*?operating.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['net_operating_cash'] = {
-        '2022': operating_cash_2022.group(1).replace(',', '') if operating_cash_2022 else '0',
-        '2023': operating_cash_2023.group(1).replace(',', '') if operating_cash_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Net cash provided by.*?operating', text)
+    data['net_operating_cash'] = {'2022': val_2022, '2023': val_2023}
     
     # Investing cash
-    investing_cash_2022 = re.search(r'Net cash used in investing.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    investing_cash_2023 = re.search(r'Net cash used in investing.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['net_investing_cash'] = {
-        '2022': investing_cash_2022.group(1).replace(',', '') if investing_cash_2022 else '0',
-        '2023': investing_cash_2023.group(1).replace(',', '') if investing_cash_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Net cash used in investing', text)
+    data['net_investing_cash'] = {'2022': val_2022, '2023': val_2023}
     
     # Financing cash
-    financing_cash_2022 = re.search(r'Net cash provided by.*?financing.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    financing_cash_2023 = re.search(r'Net cash provided by.*?financing.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['net_financing_cash'] = {
-        '2022': financing_cash_2022.group(1).replace(',', '') if financing_cash_2022 else '0',
-        '2023': financing_cash_2023.group(1).replace(',', '') if financing_cash_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Net cash provided by.*?financing', text)
+    data['net_financing_cash'] = {'2022': val_2022, '2023': val_2023}
     
     # Cash end
-    cash_end_2022 = re.search(r'Cash, cash equivalents.*?end.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    cash_end_2023 = re.search(r'Cash, cash equivalents.*?end.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['cash_end'] = {
-        '2022': cash_end_2022.group(1).replace(',', '') if cash_end_2022 else '0',
-        '2023': cash_end_2023.group(1).replace(',', '') if cash_end_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Cash, cash equivalents.*?end', text)
+    data['cash_end'] = {'2022': val_2022, '2023': val_2023}
     
     # Net Sales
-    net_sales_2022 = re.search(r'Total net sales.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    net_sales_2023 = re.search(r'Total net sales.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_net_sales'] = {
-        '2022': net_sales_2022.group(1).replace(',', '') if net_sales_2022 else '0',
-        '2023': net_sales_2023.group(1).replace(',', '') if net_sales_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total net sales', text)
+    data['total_net_sales'] = {'2022': val_2022, '2023': val_2023}
     
     # Operating Expenses
-    operating_expenses_2022 = re.search(r'Total operating expenses.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    operating_expenses_2023 = re.search(r'Total operating expenses.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['total_operating_expenses'] = {
-        '2022': operating_expenses_2022.group(1).replace(',', '') if operating_expenses_2022 else '0',
-        '2023': operating_expenses_2023.group(1).replace(',', '') if operating_expenses_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Total operating expenses', text)
+    data['total_operating_expenses'] = {'2022': val_2022, '2023': val_2023}
     
     # Weighted Average Shares Basic
-    weighted_shares_2022 = re.search(r'Weighted average shares basic.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    weighted_shares_2023 = re.search(r'Weighted average shares basic.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['weighted_average_shares_basic'] = {
-        '2022': weighted_shares_2022.group(1).replace(',', '') if weighted_shares_2022 else '0',
-        '2023': weighted_shares_2023.group(1).replace(',', '') if weighted_shares_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Weighted average shares basic', text)
+    data['weighted_average_shares_basic'] = {'2022': val_2022, '2023': val_2023}
     
     # Diluted Average Shares Basic
-    diluted_shares_2022 = re.search(r'Diluted average shares basic.*?2022.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    diluted_shares_2023 = re.search(r'Diluted average shares basic.*?2023.*?(\d+(?:,\d{3})*(?:\.\d{2})?)', text, re.IGNORECASE | re.DOTALL)
-    
-    data['diluted_average_shares_basic'] = {
-        '2022': diluted_shares_2022.group(1).replace(',', '') if diluted_shares_2022 else '0',
-        '2023': diluted_shares_2023.group(1).replace(',', '') if diluted_shares_2023 else '0'
-    }
+    val_2022, val_2023 = extract_table_values(r'Diluted average shares basic', text)
+    data['diluted_average_shares_basic'] = {'2022': val_2022, '2023': val_2023}
     
     return data
 
