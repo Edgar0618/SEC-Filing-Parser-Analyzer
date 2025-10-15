@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, render_template_string, jsonify
 from Database import createConnection, createCollection, registerUser, login, logScan
 from PasswordHashing import hash_password, verify_password
-import yfinance as yf
+# yfinance removed - using static data instead
 # Removed matplotlib - using Chart.js instead for better performance and smaller bundle size
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
